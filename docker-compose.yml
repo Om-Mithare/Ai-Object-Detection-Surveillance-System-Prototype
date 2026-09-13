@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/processed:/app/processed
+      - ./backend/models:/app/models
+    environment:
+      - DATABASE_URL=sqlite:///./hackathon_surveillance.db
+      - YOLO_MODEL_PATH=./models/yolov8n.pt
+      - CONFIDENCE_THRESHOLD=0.5
+      - FRAME_SKIP=5
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

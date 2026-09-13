@@ -3,6 +3,18 @@ import cv2
 import uuid
 import re
 from typing import List, Dict, Any
+import torch
+import ultralytics.nn.tasks
+
+# Fix for PyTorch 2.6+ strict unpickling:
+# Ultralytics 8.2 doesn't pass weights_only=False by default, causing loads to fail.
+# We monkey patch torch.load to always disable weights_only.
+_original_torch_load = torch.load
+def _patched_torch_load(*args, **kwargs):
+    kwargs['weights_only'] = False
+    return _original_torch_load(*args, **kwargs)
+torch.load = _patched_torch_load
+
 from ultralytics import YOLO
 import easyocr
 from dotenv import load_dotenv
